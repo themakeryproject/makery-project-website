@@ -1299,6 +1299,44 @@
             }
         });
 
+        // AJAX Form submission
+        const contactForm = document.querySelector('.contact-form');
+
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+
+            fetch(contactForm.action, {
+                method: 'POST',
+                body: new FormData(contactForm),
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Show success message
+                    contactForm.innerHTML = `
+                        <div style="text-align: center; padding: 60px 20px;">
+                            <div style="font-size: 4rem; margin-bottom: 20px;">🎉</div>
+                            <h3 style="font-family: 'Fredoka One', cursive; font-size: 1.8rem; margin-bottom: 15px; color: var(--primary);">Message Sent!</h3>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem;">Thank you for reaching out. We'll get back to you soon!</p>
+                        </div>
+                    `;
+                } else {
+                    throw new Error('Form submission failed');
+                }
+            })
+            .catch(error => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                alert('Oops! There was a problem sending your message. Please try again or email us directly at info@themakeryproject.org');
+            });
+        });
     </script>
 </body>
 </html>
